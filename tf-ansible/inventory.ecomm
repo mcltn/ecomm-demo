@@ -1,0 +1,2 @@
+-e [ecomm]
+169.62.213.220 ansible_connection=ssh ansible_ssh_user=root

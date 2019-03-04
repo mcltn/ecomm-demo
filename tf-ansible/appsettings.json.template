@@ -1,0 +1,42 @@
+{
+    "ConnectionStrings": {
+      "DefaultConnection": "Host=localhost;Port=12345;Database=SimplCommerce;Userid=admin;Password=;SSL Mode=Require;Trust Server Certificate=true;"
+    },
+    "Authentication" : {
+      "Facebook" : {
+        "AppId" : "",
+        "AppSecret" : ""
+      },
+      "Google" : {
+        "ClientId" : "",
+        "ClientSecret" : ""
+      },
+      "Jwt": {
+        "Key": "secretkey",
+        "Issuer": "SimplCommerce",
+        "AccessTokenDurationInMinutes":  30
+      }
+    },
+    "Logging": {
+      "IncludeScopes": false,
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    },
+    "Serilog": {
+      "MinimumLevel": {
+        "Default": "Warning"
+      },
+      "WriteTo": [
+        {
+          "Name": "RollingFile",
+          "Args": {
+            "pathFormat": "logs\\log-{Date}.txt",
+            "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] [{SourceContext}] [{EventId}] {Message}{NewLine}{Exception}"
+          }
+        }
+      ],
+      "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ]
+    }
+  }
+  

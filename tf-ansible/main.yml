@@ -1,0 +1,81 @@
+- hosts:
+    - ecomm-east
+    - ecomm-south
+  remote_user: root
+  gather_facts: false
+  become: yes
+
+  pre_tasks:
+    - name: install python 2
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      
+    - setup: # aka gather_facts
+
+  tasks:
+    - name: Run the equivalent of "apt-get update" as a separate step
+      apt:
+        update_cache: yes
+
+    - name: ensure nginx is installed
+      apt: name=nginx state=latest
+
+    - name: start nginx
+      service:
+        name: nginx
+        state: started
+
+    - name: Add Microsoft keys (Ubuntu 16.04)
+      apt:
+        deb: https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+
+    - name: Run the equivalent of "apt-get update" as a separate step
+      apt:
+        update_cache: yes
+
+    - name: install packages
+      apt: 
+        name: apt-transport-https
+        state: latest
+        update-cache: yes
+
+    - name: install aspnetcore
+      apt: name=aspnetcore-runtime-2.2
+
+    - name: Creates directory
+      file:
+        path: /var/www/SimplCommerce
+        state: directory
+        mode: 0775
+
+    - name: download and extract app build
+      unarchive:
+        src: https://github.com/mcltn/SimplCommerce/releases/download/v0.1.demo/build.tar.gz
+        dest: /var/www/SimplCommerce
+        remote_src: yes
+
+    - name: Copy appsettings
+      copy:
+        src: appsettings.json
+        dest: /var/www/SimplCommerce
+
+    - name: Copy nginx config
+      copy:
+        src: nginx.conf
+        dest: /etc/nginx/sites-available/default
+
+    - name: start nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Copy app service
+      copy:
+        src: dotnet.service
+        dest: /etc/systemd/system/simplcommerce.service
+
+    - name: start dotnet service
+      service:
+        name: simplcommerce.service
+        enabled: yes
+        state: started

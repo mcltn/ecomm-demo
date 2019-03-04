@@ -1,0 +1,16 @@
+[Unit]
+Description=SimplCommerce
+
+[Service]
+WorkingDirectory=/var/www/SimplCommerce
+ExecStart=/usr/bin/dotnet /var/www/SimplCommerce/SimplCommerce.WebHost.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=dotnet-SimplCommerce
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target
