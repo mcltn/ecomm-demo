@@ -1,8 +1,3 @@
-
-data "ibm_resource_group" "app_group" {
-  name = "${var.resource_group}"
-}
-
 data "ibm_cis" "app_domain" {
   name = "${var.cis_instance}"
 }
